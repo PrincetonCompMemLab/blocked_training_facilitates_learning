@@ -24,8 +24,7 @@ def get_sql_df(exp_version=None,verb=False):
     c.execute("SELECT name FROM sqlite_master WHERE type='table'")
     tables_in_db = c.fetchall()
     table_name = "CSWfall18" # table name must be constant to prevent repeat subjects
-    print(tables_in_db)
-
+  
     # table header
     c.execute("PRAGMA table_info(%s)"%table_name)
     col_names = [i[1] for i in c.fetchall()]
