@@ -9,7 +9,10 @@ r = requests.get("https://raw.githubusercontent.com/PrincetonCompMemLab/blocked_
 with open('model.py', 'w') as f:
     f.write(r.text)
 from model import *
-from utils import unpack_acc
+r = requests.get("https://raw.githubusercontent.com/PrincetonCompMemLab/blocked_training_facilitates_learning/master/utils.py")
+with open('utils.py', 'w') as f:
+    f.write(r.text)
+from utils import * 
 ## import human data for fitting
 hdf = pd.read_csv('data/human/human_data.csv')
 humanB_acc,humanI_acc = hdf.loc[:,('blocked mean','interleaved mean')].values.T

@@ -8,6 +8,10 @@ import os
 import pickle
 from scipy.stats import truncnorm
 import matplotlib.pyplot as plt
+import requests
+r = requests.get("https://raw.githubusercontent.com/PrincetonCompMemLab/blocked_training_facilitates_learning/master/model.py")
+with open('model.py', 'w') as f:
+    f.write(r.text)
 from model import *
 ## import human data for fitting
 
