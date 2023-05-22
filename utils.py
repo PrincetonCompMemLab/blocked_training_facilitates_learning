@@ -6,6 +6,7 @@ sns.set_context('talk')
 import pdb
 import os
 import pickle
+from io import BytesIO
 from scipy.stats import truncnorm
 import matplotlib.pyplot as plt
 import requests
@@ -284,8 +285,7 @@ def run_exps_feedHumanExp(condition_to_participant_to_exp_path, args):
   # create the participant to concentration variance here!
 
   condition_to_participant_to_measures = {} # measures are like accuracy and so on
-  with open(condition_to_participant_to_exp_path, 'rb') as pickle_file:
-    condition_to_participant_to_exp = pickle.load(pickle_file)
+  condition_to_participant_to_exp = pickle.load(BytesIO(requests.get(condition_to_participant_to_exp_path).content))
   for condition in condition_to_participant_to_exp:
     condition_to_participant_to_measures[condition] = {}
     for participant in condition_to_participant_to_exp[condition]:
@@ -299,8 +299,7 @@ def run_exps_feedHumanExp(condition_to_participant_to_exp_path, args):
 def run_exps_feedHumanExp_v7(participant_to_exp_path, args):
   # create the participant to concentration variance here!
   participant_to_measures = {} # measures are like accuracy and so on
-  with open(participant_to_exp_path, 'rb') as pickle_file:
-    participant_to_exp = pickle.load(pickle_file)
+  participant_to_exp = pickle.load(BytesIO(requests.get(participant_to_exp_path).content))
   
   for participant in participant_to_exp:
     exp = participant_to_exp[participant]
