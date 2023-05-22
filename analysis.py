@@ -14,7 +14,7 @@ with open('utils.py', 'w') as f:
     f.write(r.text)
 from utils import * 
 ## import human data for fitting
-hdf = pd.read_csv('data/human/human_data.csv')
+hdf = pd.read_csv('https://raw.githubusercontent.com/PrincetonCompMemLab/blocked_training_facilitates_learning/master/data/human/human_data.csv')
 humanB_acc,humanI_acc = hdf.loc[:,('blocked mean','interleaved mean')].values.T
 
 
