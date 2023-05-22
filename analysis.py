@@ -4,6 +4,10 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set_context('talk')
 from sklearn.metrics import adjusted_rand_score
+import requests
+r = requests.get("https://raw.githubusercontent.com/PrincetonCompMemLab/blocked_training_facilitates_learning/master/model.py")
+with open('model.py', 'w') as f:
+    f.write(r.text)
 from model import *
 from utils import unpack_acc
 ## import human data for fitting
