@@ -7,4 +7,4 @@ If you would like to run the model simulations with the parameter settings and c
 
 If you would like to perform new data analyses on the human data, please run the colab here: https://colab.research.google.com/github/PrincetonCompMemLab/csw_paper_final/blob/master/humanData_analysis_sandbox.ipynb
 
-If you would like to run model simulations with your own custom parameter settings and see the results of those changes, please run the colab here: https://colab.research.google.com/github/PrincetonCompMemLab/csw_paper_final/blob/master/new_simulation_sandbox.ipynb#scrollTo=Z0NNuSYZtO2M
+If you would like to run model simulations with your own custom parameter settings and see the results of those changes, please run the colab here: https://colab.research.google.com/github/PrincetonCompMemLab/blocked_training_facilitates_learning/blob/master/new_simulation_sandbox.ipynb
