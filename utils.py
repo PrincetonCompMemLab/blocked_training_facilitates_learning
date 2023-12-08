@@ -142,35 +142,35 @@ def run_batch_exp(ns,args, concentration_info = None,
   spars_list = [] # sparsity
 
   if concentration_info != None:
-    lower,upper = concentration_info["concentration_lb"], concentration_info["concentration_ub"]
-    mu, sigma = concentration_info["concentration_mean"], concentration_info["concentration_sd"]
+    concentration_lower,concentration_upper = concentration_info["concentration_lb"], concentration_info["concentration_ub"]
+    concentration_mu, concentration_sigma = concentration_info["concentration_mean"], concentration_info["concentration_sd"]
 
   if stickiness_info != None:
-    lower,upper = stickiness_info["stickiness_lb"], stickiness_info["stickiness_ub"]
-    mu, sigma = stickiness_info["stickiness_mean"], stickiness_info["stickiness_sd"]
+    stickiness_lower,stickiness_upper = stickiness_info["stickiness_lb"], stickiness_info["stickiness_ub"]
+    stickiness_mu, stickiness_sigma = stickiness_info["stickiness_mean"], stickiness_info["stickiness_sd"]
 
   if sparsity_info != None:
-    lower,upper = sparsity_info["sparsity_lb"], sparsity_info["sparsity_ub"]
-    mu, sigma = sparsity_info["sparsity_mean"], sparsity_info["sparsity_sd"]
+    sparsity_lower,sparsity_upper = sparsity_info["sparsity_lb"], sparsity_info["sparsity_ub"]
+    sparsity_mu, sparsity_sigma = sparsity_info["sparsity_mean"], sparsity_info["sparsity_sd"]
 
 
   for i in range(ns):
     # only the concentrationAcross will have this parameter in here
     if concentration_info != None:
         args['sch']["concentration"] = truncnorm.rvs(
-                                      a = (lower - mu) / sigma, 
-                                      b = (upper - mu) / sigma,
-                                      loc = mu, 
-                                      scale = sigma, 
+                                      a = (concentration_lower - concentration_mu) / concentration_sigma, 
+                                      b = (concentration_upper - mu) / concentration_sigma,
+                                      loc = concentration_mu, 
+                                      scale = concentration_sigma, 
                                       size = 1)[0]
         c_list.append(args['sch']["concentration"])
 
     if stickiness_info != None:
       new_sticky = truncnorm.rvs(
-                                a = (lower - mu) / sigma, 
-                                b = (upper - mu) / sigma,
-                                loc = mu, 
-                                scale = sigma, 
+                                a = (stickiness_lower - stickiness_mu) / stickiness_sigma, 
+                                b = (stickiness_upper - stickiness_mu) / stickiness_sigma,
+                                loc = stickiness_mu, 
+                                scale = stickiness_sigma, 
                                 size = 1)[0]
       args['sch']["stickiness_wi"] = new_sticky
       args['sch']["stickiness_bt"] = new_sticky
@@ -178,10 +178,10 @@ def run_batch_exp(ns,args, concentration_info = None,
 
     if sparsity_info != None:
       args['sch']["sparsity"] = truncnorm.rvs(
-                                    a = (lower - mu) / sigma, 
-                                    b = (upper - mu) / sigma,
-                                    loc = mu, 
-                                    scale = sigma, 
+                                    a = (sparsity_lower - sparsity_mu) / sparsity_sigma, 
+                                    b = (sparsity_upper - sparsity_mu) / sparsity_sigma,
+                                    loc = sparsity_mu, 
+                                    scale = sparsity_sigma, 
                                     size = 1)[0]
       spars_list.append(args['sch']["sparsity"])
 
