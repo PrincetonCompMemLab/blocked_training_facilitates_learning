@@ -2,7 +2,6 @@
 import pandas as pd
 import numpy as np
 import seaborn as sns
-sns.set_context('talk')
 import pdb
 import os
 import pickle

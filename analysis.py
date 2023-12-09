@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
-sns.set_context('talk')
 from sklearn.metrics import adjusted_rand_score
 import requests
 r = requests.get("https://raw.githubusercontent.com/PrincetonCompMemLab/blocked_training_facilitates_learning/master/model.py")
