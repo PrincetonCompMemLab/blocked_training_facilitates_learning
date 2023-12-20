@@ -26,7 +26,17 @@ class SchemaTabularBayes():
         self.decay_rate = decay_rate
 
     def get_prior(self,beta_mode,ztm1,ztrm1):
-        """ beta_mode controls whether to combine betas or use separate
+        """ 
+        beta_mode: 
+        - controls whether to combine betas or use separate . This option 
+          is not used in the simulations since beta_mode is always 0 or 1. 
+        - When beta_mode is 0, this means we have within-story transition
+        - When beta_mode is 1, this mean we have an across-story transition
+        - Beta_wi, the within-story transition stickiness, and beta_bt,
+          the across-story transition stickiness, can be different therefore
+          giving the model more flexibility. However, none of our simulations
+          take advantage of this and we always have beta_wi and beta_bt set
+          equal to each other. 
         ztm1 : z of tstep t minus 1
         ztrm1 : z of trial t minus 1
         """
@@ -114,7 +124,20 @@ class SEM():
             sch.decay()
         return None
 
+
     def get_beta_mode(self):
+        '''
+        beta_mode: 
+        - controls whether to combine betas or use separate. This option 
+          is not used in the simulations since beta_mode is always 0 or 1. 
+        - When beta_mode is 0, this means we have within-story transition
+        - When beta_mode is 1, this mean we have an across-story transition
+        - Beta_wi, the within-story transition stickiness, and beta_bt,
+          the across-story transition stickiness, can be different therefore
+          giving the model more flexibility. However, none of our simulations
+          take advantage of this and we always have beta_wi and beta_bt set
+          equal to each other. 
+        '''
         if self.tstep==0: 
             return 1 # between only
         elif self.beta2_flag:
