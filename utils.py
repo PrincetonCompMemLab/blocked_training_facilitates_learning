@@ -186,7 +186,7 @@ def run_batch_exp(ns,args, concentration_info = None,
 
     #print("seed: ",args['sch']["concentration"])
     task = Task()
-    # sem contains beta2,skipt1,ppd_allsch so unpack it
+    # sem contains skipt1,ppd_allsch so unpack it
     sem = SEM(schargs=args['sch'],**args['sem'])
     exp,curr  = task.generate_experiment(**args['exp'])
     # the experiment is all of the paths we want to give at each time point
@@ -257,7 +257,7 @@ def run_batch_exp_sim4(ns,args, condition = None, concentration_info = None,
 
     #print("seed: ",args['sch']["concentration"])
     task = Task()
-    # sem contains beta2,skipt1,ppd_allsch so unpack it
+    # sem contains skipt1,ppd_allsch so unpack it
     sem = SEM(schargs=args['sch'],**args['sem'])
     exp,curr  = task.generate_experiment(**args['exp'])
     # the experiment is all of the paths we want to give at each time point

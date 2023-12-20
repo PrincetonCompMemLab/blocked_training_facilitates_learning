@@ -35,7 +35,6 @@ def get_argsD(row):
     'n_test':40
   }
   semargs = {
-    'beta2':0,
     'skipt1':dict(row)['skipt1'],
     'ppd_allsch':0
   }

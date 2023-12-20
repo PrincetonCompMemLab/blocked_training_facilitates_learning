@@ -12,12 +12,11 @@ class SchemaTabularBayes():
     # lrate is not lrate like optimization
     # lratep was playing around with
     # 
-    def __init__(self,concentration,stickiness_wi,stickiness_bt,sparsity,
+    def __init__(self,concentration,stickiness,sparsity,
         lrate=1,lratep=1,pvar=0,decay_rate=1,schidx=None):
         self.Tmat = np.zeros([NSTATES,NSTATES]) # this is the transition matrix from one state to another under this schema and so that is what is unique to a schema and what is updated or decayed
         self.alfa = concentration
-        self.beta_wi = stickiness_wi
-        self.beta_bt = stickiness_bt - np.abs(pvar*np.random.randn(1)[0]) # remove
+        self.beta = stickiness
         self.lrate = lrate # lrate like
         self.lratep = lratep # lrate prior
         self.lmbda = sparsity
@@ -25,41 +24,14 @@ class SchemaTabularBayes():
         self.schidx = schidx
         self.decay_rate = decay_rate
 
-    def get_prior(self,beta_mode,ztm1,ztrm1):
+    def get_prior(self,ztm1):
         """ 
-        beta_mode: 
-        - controls whether to combine betas or use separate . This option 
-          is not used in the simulations since beta_mode is always 0 or 1. 
-        - When beta_mode is 0, this means we have within-story transition
-        - When beta_mode is 1, this mean we have an across-story transition
-        - Beta_wi, the within-story transition stickiness, and beta_bt,
-          the across-story transition stickiness, can be different therefore
-          giving the model more flexibility. However, none of our simulations
-          take advantage of this and we always have beta_wi and beta_bt set
-          equal to each other. 
         ztm1 : z of tstep t minus 1
-        ztrm1 : z of trial t minus 1
         """
         if self.ntimes_sampled == 0:
             return self.alfa
         ztm1_flag = ztm1 == self.schidx
-        ztrm1_flag = ztrm1 == self.schidx
-        if beta_mode == 0: # beta within only
-            # pdb.set_trace()
-            # ztm1_flag asks whether or not this particular schema is the 
-            # schema of the previous trial
-            # beta_wi is the stickiness which says that the probability
-            # of the previous schema is higher, so it is likely to stick around
-            # in this way, wheras a normal CRP just includes self.ntimes_sampled
-            # since the normal CRP is like saying that a dollar bill is more likely
-            # going to go to the rich than the poor
-            crp = self.lratep*self.ntimes_sampled + self.beta_wi* ztm1_flag
-        elif beta_mode == 1: # beta between only
-            assert ztm1 == ztrm1
-            crp = self.lratep*self.ntimes_sampled + self.beta_bt* ztm1_flag
-        elif beta_mode == 2: # combined
-            crp = self.lratep*self.ntimes_sampled + \
-                    self.beta_bt*ztrm1_flag + self.beta_wi*ztm1_flag
+        crp = self.lratep*self.ntimes_sampled + self.beta* ztm1_flag
         return crp
 
     def get_like(self,xtm1,xt):
@@ -96,10 +68,9 @@ class SchemaTabularBayes():
 
 class SEM():
 
-    def __init__(self,schargs,beta2,skipt1,ppd_allsch):
+    def __init__(self,schargs,skipt1,ppd_allsch):
         self.SchClass = SchemaTabularBayes
         self.schargs = schargs
-        self.beta2_flag = beta2
         self.skipt1 = skipt1 # you want to skip the first time point since predicting it is problematic when it is 50/50
         self.ppd_allsch = ppd_allsch # this we decided to be false?
         self.init_schlib()
@@ -125,39 +96,16 @@ class SEM():
         return None
 
 
-    def get_beta_mode(self):
-        '''
-        beta_mode: 
-        - When beta_mode is 0, this means we have within-story transition.
-        - When beta_mode is 1, this mean we have an across-story transition.
-        - Beta_wi, the within-story transition stickiness, and beta_bt,
-          the across-story transition stickiness, can be different therefore
-          giving the model more flexibility. However, none of our simulations
-          take advantage of this and we always have beta_wi and beta_bt set
-          equal to each other. 
-        - When beta2_flag is True, we have a formula for the prior that 
-          includes both the within and between story stickiness. 
-        '''
-        if self.tstep==0: 
-            return 1 # between only
-        elif self.beta2_flag:
-            return 2 # between+within
-        else:
-            return 0 # within only
-        return None
-
     def calc_posteriors(self,xtm1,xt,ztm,ztrm,active_only=False):
         """ loop over schema library
         """
-        beta_mode = self.get_beta_mode()
         if active_only: # prediction
-            # beta_mode is 1 for between only at tstep = 0, but otherwise 0 for within only
-            priors = [sch.get_prior(beta_mode,ztm,ztrm) for sch in self.schlib if sch.ntimes_sampled>0]
+            priors = [sch.get_prior(ztm) for sch in self.schlib if sch.ntimes_sampled>0]
             likes = [sch.get_like(xtm1,xt) for sch in self.schlib if sch.ntimes_sampled>0]
             # print(self.tstep,likes)
         else: # sch inference
             # pdb.set_trace()
-            priors = [sch.get_prior(beta_mode,ztm,ztrm) for sch in self.schlib]
+            priors = [sch.get_prior(ztm) for sch in self.schlib]
             likes = [sch.get_like(xtm1,xt) for sch in self.schlib]
             # record
             self.data['prior'][self.tridx,self.tstep,:len(priors)] = priors
