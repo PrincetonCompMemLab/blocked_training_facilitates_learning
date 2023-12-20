@@ -128,15 +128,15 @@ class SEM():
     def get_beta_mode(self):
         '''
         beta_mode: 
-        - controls whether to combine betas or use separate. This option 
-          is not used in the simulations since beta_mode is always 0 or 1. 
-        - When beta_mode is 0, this means we have within-story transition
-        - When beta_mode is 1, this mean we have an across-story transition
+        - When beta_mode is 0, this means we have within-story transition.
+        - When beta_mode is 1, this mean we have an across-story transition.
         - Beta_wi, the within-story transition stickiness, and beta_bt,
           the across-story transition stickiness, can be different therefore
           giving the model more flexibility. However, none of our simulations
           take advantage of this and we always have beta_wi and beta_bt set
           equal to each other. 
+        - When beta2_flag is True, we have a formula for the prior that 
+          includes both the within and between story stickiness. 
         '''
         if self.tstep==0: 
             return 1 # between only
