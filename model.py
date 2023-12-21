@@ -7,22 +7,14 @@ class SchemaTabularBayes():
     """ CRP prior
     tabluar predictive distirbution
     """
-    # two predicts, predict in SEM refers ppd_allch
-    # lratep is learning rate of prior
-    # lrate is not lrate like optimization
-    # lratep was playing around with
-    # 
     def __init__(self,concentration,stickiness,sparsity,
         schidx=None):
-        self.Tmat = np.zeros([NSTATES,NSTATES]) # this is the transition matrix from one state to another under this schema and so that is what is unique to a schema and what is updated or decayed
+        self.Tmat = np.zeros([NSTATES,NSTATES])
         self.alfa = concentration
         self.beta = stickiness
-        self.lrate = 1
-        self.lratep = 1
         self.lmbda = sparsity
         self.ntimes_sampled = 0
         self.schidx = schidx
-        self.decay_rate = 1
 
     def get_prior(self,ztm1):
         """ 
@@ -31,35 +23,23 @@ class SchemaTabularBayes():
         if self.ntimes_sampled == 0:
             return self.alfa
         ztm1_flag = ztm1 == self.schidx
-        crp = self.lratep*self.ntimes_sampled + self.beta* ztm1_flag
+        crp = self.ntimes_sampled + self.beta* ztm1_flag
         return crp
 
     def get_like(self,xtm1,xt):
-        # when you draw from a Dir(alpha), this means that you sample a distribution
-        # where the sample is a
-        # Dir() 
-        # so T(dot| s,k) means that the next state transition distribution
-        # is 
-        # this is equation (4) here in the one page paper
         PARAM_S = 2
         num = self.lmbda + self.Tmat[xtm1,xt] # sparsity plus number of transitions from the previous state to the current under this schema 
         den = (PARAM_S*self.lmbda) + self.Tmat[xtm1,:].sum() 
-        # self.Tmat[xtm1,:].sum() is the total amount of transitions from the previous time point to all others
         like = num/den
         return like
 
     def update(self,xtm1,xt):
         # update schema transiton
-        self.Tmat[xtm1,xt]+=self.lrate
-        return None
-
-    def decay(self):
-        self.Tmat = self.Tmat*self.decay_rate
+        self.Tmat[xtm1,xt]
         return None
 
     def predict(self,xtm1):
         """ returns un-normalized count """
-        # the likelihood is 
         xthat = np.array([
             self.get_like(xtm1,x) for x in range(NSTATES)
             ])
@@ -71,8 +51,8 @@ class SEM():
     def __init__(self,schargs,skipt1,ppd_allsch):
         self.SchClass = SchemaTabularBayes
         self.schargs = schargs
-        self.skipt1 = skipt1 # you want to skip the first time point since predicting it is problematic when it is 50/50
-        self.ppd_allsch = ppd_allsch # this we decided to be false?
+        self.skipt1 = skipt1 
+        self.ppd_allsch = ppd_allsch 
         self.init_schlib()
 
     def init_schlib(self):
@@ -80,13 +60,8 @@ class SEM():
         initialize with two schemas
         one active one inactive
         """
-        # schargs contains concentration,stickiness_wi,stickiness_bt,sparsity,
-        # lrate=1,lratep=1,pvar=0,decay_rate=1, so unpacking it is a good idea
         sch0 = self.SchClass(**self.schargs,schidx=0)
         sch1 = self.SchClass(**self.schargs,schidx=1)
-        # okay so there is always an unused schema at the end of a list
-        # and we always keep one around
-        # so whenever 
         self.schlib = [sch0,sch1]
         return None
 
@@ -102,9 +77,7 @@ class SEM():
         if active_only: # prediction
             priors = [sch.get_prior(ztm) for sch in self.schlib if sch.ntimes_sampled>0]
             likes = [sch.get_like(xtm1,xt) for sch in self.schlib if sch.ntimes_sampled>0]
-            # print(self.tstep,likes)
         else: # sch inference
-            # pdb.set_trace()
             priors = [sch.get_prior(ztm) for sch in self.schlib]
             likes = [sch.get_like(xtm1,xt) for sch in self.schlib]
             # record
@@ -117,13 +90,9 @@ class SEM():
         """ xt and xtm1 are ints
         """
         posteriors = self.calc_posteriors(xtm1,xt,ztm,ztrm)
-       # print(posteriors)
         # for each trial and each time step we want to get the posterior probability of each of the schemas 
         self.data['post'][self.tridx,self.tstep,:len(posteriors)] = posteriors
         active_k = np.argmax(posteriors)
-        # since we have schlib's last element being a never sampled schema always
-        # this way if that never sampled schema is better, then its a sign to
-        # split
         if active_k == len(self.schlib)-1:
             self.schlib.append(self.SchClass(**self.schargs,schidx=len(self.schlib)))
         return active_k
@@ -139,8 +108,6 @@ class SEM():
         return pr_xtp1
 
     def run_exp(self,exp):
-        # this is the logic of the model
-        # 
         """ exp is L of trialL
         trialL is L of obs (ints) 
         """
@@ -154,64 +121,26 @@ class SEM():
             'post':-np.ones([len(exp),len(exp[0]),MAX_SCH]),
         }
         scht = schtm = schtrm = self.schlib[0] # sch0 is active to start
-        # scht.ntimes_sampled += 1
-        # each trial is a path
-        # at a high level here, we go through each sequence
-        # in the list of sequences
         for tridx,trialL in enumerate(exp):
             self.tridx = tridx
-            ## pdb.set_trace()
-            # pdb.set_trace()
-            # print("tridx: ", tridx)
-            # print("self.skipt1: ", self.skipt1)
-            # for each time step in one of these sequences
-            # going from xtm, to xt
-            #  and the equations often refer to the previous so did it like this
-            # x_(t-1) = xtm
-            # if model is splitting 205 times it is clearly wrong
-            # also detrimental back in the day because more splitting
-            # in order to move fast needed to run more simulations per hour
-            # the simulations would 
             for tstep,(xtm,xt) in enumerate(zip(trialL[:-1],trialL[1:])):
-                # conditional
-              
                 if (tstep==1) and (self.skipt1): 
                     continue
                 if len(self.schlib)>=MAX_SCH: return data
-                # print('ts',tstep)
                 self.tstep = tstep
-                ## prediction: marginilize over schemas
-                # make a prediction of the next thing given the currently active schema
                 if self.ppd_allsch:
-                    # this first predict is called over
                     xth = self.predict(xtm,schtm.schidx,schtrm.schidx)
                 else:
                     xth = scht.predict(xtm)
-                ## prediction: only active schema
-                # xth = scht.predict(xtm)
-                # update infered active schema
-                # then update with a possibly better schema
-                # zt is the schema at time step t, which is what 
-                # the write up describes as freezing the schema history
-                # to be the locally optimal point
                 zt = self.select_sch(xtm,xt,schtm.schidx,schtrm.schidx)
                 scht = self.schlib[zt] # scht is the current schema at time t
-                # print(tstep,scht.Tmat,self.data['likes'][:20,:,1])
-                ## forgetting
-                scht.decay() # this does not do anything anymore
                 # update transition matrix
                 scht.update(xtm,xt) # this updates the transition matrix
                 # of the newly selected schema
                 scht.ntimes_sampled += 1
                 # update schema history
                 schtm = scht
-                # this records the predicted state of the schema
-                # and the schema itself at this trial during this time step
-                # presumably to later be used to figure out the accuracy
-                # of the next state prediction
-                # pdb.set_trace()
                 data['xth'][tridx][tstep] = xth
-                #pdb.set_trace()
                 data['zt'][tridx][tstep] = zt       
             # final schema of trial
             schtrm = scht 
@@ -219,8 +148,6 @@ class SEM():
 
 
     def run_exp_sim4_blocked(self,exp,skipt1trial=40):
-        # this is the logic of the model
-        # 
         """ exp is L of trialL
         trialL is L of obs (ints) 
         """
@@ -234,68 +161,29 @@ class SEM():
             'post':-np.ones([len(exp),len(exp[0]),MAX_SCH]),
         }
         scht = schtm = schtrm = self.schlib[0] # sch0 is active to start
-        # scht.ntimes_sampled += 1
-        # each trial is a path
-        # at a high level here, we go through each sequence
-        # in the list of sequences
         for tridx,trialL in enumerate(exp):
-            # print("tridx: ", tridx)
-            # print("self.skipt1: ", self.skipt1)
             self.tridx = tridx
             if tridx >= skipt1trial:
                 self.skipt1 = True
-            ## pdb.set_trace()
-            # pdb.set_trace()
-            
-            # for each time step in one of these sequences
-            # going from xtm, to xt
-            #  and the equations often refer to the previous so did it like this
-            # x_(t-1) = xtm
-            # if model is splitting 205 times it is clearly wrong
-            # also detrimental back in the day because more splitting
-            # in order to move fast needed to run more simulations per hour
-            # the simulations would 
             for tstep,(xtm,xt) in enumerate(zip(trialL[:-1],trialL[1:])):
-                
-                # conditional
-                if (tstep==1) and (self.skipt1): 
-                   
+                if (tstep==1) and (self.skipt1):    
                     continue
                 if len(self.schlib)>=MAX_SCH: return data
-                # print('ts',tstep)
                 self.tstep = tstep
-                ## prediction: marginilize over schemas
-                # make a prediction of the next thing given the currently active schema
                 if self.ppd_allsch:
                     # this first predict is called over
                     xth = self.predict(xtm,schtm.schidx,schtrm.schidx)
                 else:
                     xth = scht.predict(xtm)
-                ## prediction: only active schema
-                # xth = scht.predict(xtm)
-                # update infered active schema
-                # then update with a possibly better schema
-                # zt is the schema at time step t, which is what 
-                # the write up describes as freezing the schema history
-                # to be the locally optimal point
                 zt = self.select_sch(xtm,xt,schtm.schidx,schtrm.schidx)
                 scht = self.schlib[zt] # scht is the current schema at time t
-                # print(tstep,scht.Tmat,self.data['likes'][:20,:,1])
-                ## forgetting
-                scht.decay() # this does not do anything anymore
                 # update transition matrix
                 scht.update(xtm,xt) # this updates the transition matrix
                 # of the newly selected schema
                 scht.ntimes_sampled += 1
                 # update schema history
                 schtm = scht
-                # this records the predicted state of the schema
-                # and the schema itself at this trial during this time step
-                # presumably to later be used to figure out the accuracy
-                # of the next state prediction
-                # pdb.set_trace()
                 data['xth'][tridx][tstep] = xth
-                #pdb.set_trace()
                 data['zt'][tridx][tstep] = zt       
             # final schema of trial
             schtrm = scht 
