@@ -43,10 +43,6 @@ def get_argsD(row):
      'concentration':dict(row)['concentration'],
      'stickiness':dict(row)['stickiness'],
      'sparsity':dict(row)['sparsity'],
-     'pvar': 0,
-     'lrate':1,
-     'lratep':1,
-     'decay_rate':1,
   }
   args = {
       'sem':semargs,
@@ -82,6 +78,7 @@ def plt_acc(exp_batch_data, ns = 100, output_test_acc = False):
     return conditions_and_seeds_acc, conditions_and_tstep_and_trial_acc, each_condition_mean_across_seeds_each_trial, each_condition_std_across_seeds_each_trial
   else:
     return conditions_and_seeds_test_acc
+  
 ## VIOLIN 
 ## count number of schemas used
 def count_num_schemas(exp_batch_data, skipt1 = True):
@@ -90,7 +87,6 @@ def count_num_schemas(exp_batch_data, skipt1 = True):
   nseeds = len(exp_batch_data[0])
   L = []
   for curr_idx in range(len(condL)):
-
     if skipt1:
       # substract 1 since it is initialized with -1
       # so we don't want the -1 to impact the num schemas used
