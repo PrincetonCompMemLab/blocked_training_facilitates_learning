@@ -41,8 +41,7 @@ def get_argsD(row):
   ## get params from top MSE
   schargs = {
      'concentration':dict(row)['concentration'],
-     'stickiness_wi':dict(row)['stickiness_wi'],
-     'stickiness_bt':dict(row)['stickiness_bt'],
+     'stickiness':dict(row)['stickiness'],
      'sparsity':dict(row)['sparsity'],
      'pvar': 0,
      'lrate':1,
