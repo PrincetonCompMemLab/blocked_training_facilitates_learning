@@ -35,7 +35,7 @@ class SchemaTabularBayes():
 
     def update(self,xtm1,xt):
         # update schema transiton
-        self.Tmat[xtm1,xt]
+        self.Tmat[xtm1,xt]+=1
         return None
 
     def predict(self,xtm1):
