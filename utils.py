@@ -171,8 +171,7 @@ def run_batch_exp(ns,args, concentration_info = None,
                                 loc = stickiness_mu, 
                                 scale = stickiness_sigma, 
                                 size = 1)[0]
-      args['sch']["stickiness_wi"] = new_sticky
-      args['sch']["stickiness_bt"] = new_sticky
+      args['sch']["stickiness"] = new_sticky
       s_list.append(new_sticky)
 
     if sparsity_info != None:
