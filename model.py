@@ -13,7 +13,7 @@ class SchemaTabularBayes():
     # lratep was playing around with
     # 
     def __init__(self,concentration,stickiness,sparsity,
-       ,schidx=None):
+       schidx=None):
         self.Tmat = np.zeros([NSTATES,NSTATES]) # this is the transition matrix from one state to another under this schema and so that is what is unique to a schema and what is updated or decayed
         self.alfa = concentration
         self.beta = stickiness
