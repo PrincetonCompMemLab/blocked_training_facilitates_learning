@@ -21,6 +21,10 @@ condL = ['blocked','interleaved',
          'early','middle','late'
         ]
 
+def get_param_str_from_args(args):
+  param_str = "-".join(["%s_%.3f"%(i,j) for i,j in args["sch"].items()])
+  param_str += "-"+"-".join(["%s_%.3f"%(i,j) for i,j in args["sch"].items()])
+  return param_str
 
 ## get params
 def get_argsD(row):
@@ -49,8 +53,7 @@ def get_argsD(row):
       'sch':schargs,
       'exp':taskargs
   }
-  param_str = "-".join(["%s_%.3f"%(i,j) for i,j in schargs.items()])
-  param_str += "-"+"-".join(["%s_%.3f"%(i,j) for i,j in semargs.items()])
+  param_str = get_param_str_from_args(args)
   return args,param_str
 
 # PLOT ACC

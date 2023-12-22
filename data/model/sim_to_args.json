@@ -1,0 +1,8 @@
+{
+    "sim1": {"sem": {"skipt1": 0.0, "ppd_allsch": 0}, "sch": {"concentration": 4.775016084, "stickiness": 96.79198472087737, "sparsity": 0.050580176}, "exp": {"condition": -1000, "n_train": 160, "n_test": 40}},
+    "sim2": {"sem": {"skipt1": 1.0, "ppd_allsch": 0}, "sch": {"concentration": 1.7026910310943673, "stickiness": 1.8476105399460376, "sparsity": 0.2112472814674634}, "exp": {"condition": -1000, "n_train": 160, "n_test": 40}},
+    "sim3": {"sem": {"skipt1": 1.0, "ppd_allsch": 0}, "sch": {"concentration": 3.604484430987487, "stickiness": 5.056799655, "sparsity": 0.4358791197361261}, "exp": {"condition": -1000, "n_train": 160, "n_test": 40}},
+    "sim4": {"sem": {"skipt1": 0.0, "ppd_allsch": 0}, "sch": {"concentration": 4.055176291930948, "stickiness": 5.714670380370007, "sparsity": 0.3427017613731274}, "exp": {"condition": -1000, "n_train": 160, "n_test": 40}},
+    "sim5": {"sem": {"skipt1": 1.0, "ppd_allsch": 0}, "sch": {"concentration": 4.113339737291655, "stickiness": 5.629858085774998, "sparsity": 0.472781057850033}, "exp": {"condition": -1000, "n_train": 160, "n_test": 40}},
+    "sim6": {"sem": {"skipt1": 1.0, "ppd_allsch": 0}, "sch": {"concentration": 3.538102475341813, "stickiness": 5.103345200865606, "sparsity": 0.4237813632246343}, "exp": {"condition": -1000, "n_train": 160, "n_test": 40}}
+}
