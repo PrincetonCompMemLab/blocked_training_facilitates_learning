@@ -307,7 +307,7 @@ def run_batch_exp_curr(ns,args,currL=['blocked','interleaved'],
       data_batch, c_list, s_list, spars_list, transition_matrices_each_seed, nschemas_each_seed = run_batch_exp(ns,args, 
                             concentration_info = concentration_info,
                             stickiness_info= stickiness_info,
-                            sparsity_info = sparsity_info, transition_matrix_analysis = False)
+                            sparsity_info = sparsity_info, transition_matrix_analysis = transition_matrix_analysis)
       transition_matrices_each_condition.append(transition_matrices_each_seed)
       nschemas_each_condition.append(nschemas_each_seed)
     else:
