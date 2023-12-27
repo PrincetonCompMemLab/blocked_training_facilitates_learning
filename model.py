@@ -107,7 +107,7 @@ class SEM():
         pr_xtp1 = np.sum(pr_xt_z,axis=1) # sum over schemas
         return pr_xtp1
 
-    def run_exp(self,exp):
+    def run_exp(self,exp, transition_matrix_analysis = False):
         """ exp is L of trialL
         trialL is L of obs (ints) 
         """
@@ -144,6 +144,10 @@ class SEM():
                 data['zt'][tridx][tstep] = zt       
             # final schema of trial
             schtrm = scht 
+        if transition_matrix_analysis:
+            transition_matrices = [sch.Tmat for sch in self.schlib if sch.ntimes_sampled>0]
+            nschemas = len(transition_matrices)
+            return data, transition_matrices, nschemas
         return data
 
 

@@ -97,7 +97,8 @@ def unpack_data(cbatch_data,dtype='priors'):
 ### RUN EXP
 def run_batch_exp(ns,args, concentration_info = None, 
                   stickiness_info = None,
-                  sparsity_info = None):
+                  sparsity_info = None,
+                  transition_matrix_analysis = False):
   """ exp over seeds, 
   single task_condition / param config
   return full data
@@ -106,7 +107,8 @@ def run_batch_exp(ns,args, concentration_info = None,
   c_list = [] # concentration
   s_list = [] # stickiness
   spars_list = [] # sparsity
-
+  transition_matrices_each_seed = []
+  nschemas_each_seed = []
   if concentration_info != None:
     concentration_lower,concentration_upper = concentration_info["concentration_lb"], concentration_info["concentration_ub"]
     concentration_mu, concentration_sigma = concentration_info["concentration_mean"], concentration_info["concentration_sd"]
@@ -149,9 +151,16 @@ def run_batch_exp(ns,args, concentration_info = None,
     task = Task()
     sem = SEM(schargs=args['sch'],**args['sem'])
     exp,curr  = task.generate_experiment(**args['exp'])
-    data = sem.run_exp(exp)
+    if transition_matrix_analysis:
+      data, transition_matrices, nschemas = sem.run_exp(exp, transition_matrix_analysis = transition_matrix_analysis)
+      transition_matrices_each_seed.append(transition_matrices)
+      nschemas_each_seed.append(nschemas)
+    else:
+      data = sem.run_exp(exp, transition_matrix_analysis = transition_matrix_analysis)
     data['exp']=exp
     dataL.append(data)
+  if transition_matrices:
+     return dataL, c_list, s_list, spars_list, transition_matrices_each_seed, nschemas_each_seed
   return dataL, c_list, s_list, spars_list
 
 def run_batch_exp_sim4(ns,args, condition = None, concentration_info = None, 
@@ -281,7 +290,7 @@ def unpack_acc_feedHuman(condition_to_participant_to_measures,
 
 def run_batch_exp_curr(ns,args,currL=['blocked','interleaved'], 
                   concentration_info = None, stickiness_info = None,
-                  sparsity_info = None):
+                  sparsity_info = None, transition_matrix_analysis = False):
   """ loop over task conditions, 
   return acc [task_condition,seed,trial]
   """
@@ -290,18 +299,30 @@ def run_batch_exp_curr(ns,args,currL=['blocked','interleaved'],
   c_list_each_condition = []
   s_list_each_condition = []
   spars_list_each_condition = []
+  transition_matrices_each_condition = []
+  nschemas_each_condition = []
   for curr in currL:
     args['exp']['condition'] = curr
-    data_batch, c_list, s_list, spars_list = run_batch_exp(ns,args, 
-                          concentration_info = concentration_info,
-                          stickiness_info= stickiness_info,
-                          sparsity_info = sparsity_info)
+    if transition_matrix_analysis:
+      data_batch, c_list, s_list, spars_list, transition_matrices_each_seed, nschemas_each_seed = run_batch_exp(ns,args, 
+                            concentration_info = concentration_info,
+                            stickiness_info= stickiness_info,
+                            sparsity_info = sparsity_info, transition_matrix_analysis = False)
+      transition_matrices_each_condition.append(transition_matrices_each_seed)
+      nschemas_each_condition.append(nschemas_each_seed)
+    else:
+      data_batch, c_list, s_list, spars_list = run_batch_exp(ns,args, 
+                            concentration_info = concentration_info,
+                            stickiness_info= stickiness_info,
+                            sparsity_info = sparsity_info, transition_matrix_analysis = False)
     c_list_each_condition.append(c_list)
     s_list_each_condition.append(s_list)
     spars_list_each_condition.append(spars_list)
     dataL.append(data_batch)
     acc = np.array([get_acc(data) for data in data_batch]).mean(1)
     accL.append(acc)
+  if transition_matrix_analysis:
+     return dataL, c_list_each_condition, s_list_each_condition, spars_list_each_condition, transition_matrices_each_condition, nschemas_each_condition
   return dataL, c_list_each_condition, s_list_each_condition, spars_list_each_condition
 
 def run_batch_exp_curr_sim4(ns,args,currL=['blocked','interleaved'], 
