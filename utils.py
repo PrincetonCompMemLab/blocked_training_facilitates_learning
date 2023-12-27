@@ -159,7 +159,7 @@ def run_batch_exp(ns,args, concentration_info = None,
       data = sem.run_exp(exp, transition_matrix_analysis = transition_matrix_analysis)
     data['exp']=exp
     dataL.append(data)
-  if transition_matrices:
+  if transition_matrix_analysis:
      return dataL, c_list, s_list, spars_list, transition_matrices_each_seed, nschemas_each_seed
   return dataL, c_list, s_list, spars_list
 
