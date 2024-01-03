@@ -104,7 +104,11 @@ class SEM():
             self.calc_posteriors(xtm1,x,ztm,ztrm,active_only=True
                 ) for x in range(NSTATES)
             ]) # probability of each next state under each schema
-        pr_xtp1 = np.sum(pr_xt_z,axis=1) # sum over schemas
+        if np.shape(pr_xt_z)[1] == 0:
+            pr_xtp1 = np.array([np.nan for i in range(9)])
+        else:
+            pr_xtp1 = np.sum(pr_xt_z,axis=1)
+        pr_xtp1 = pr_xtp1 / pr_xtp1.sum()
         return pr_xtp1
 
     def run_exp(self,exp, transition_matrix_analysis = False):
