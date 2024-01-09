@@ -65,11 +65,6 @@ class SEM():
         self.schlib = [sch0,sch1]
         return None
 
-    def decay_allsch(self):
-        for sch in self.schlib:
-            sch.decay()
-        return None
-
 
     def calc_posteriors(self,xtm1,xt,ztm,ztrm,active_only=False):
         """ loop over schema library
