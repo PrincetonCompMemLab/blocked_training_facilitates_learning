@@ -2,7 +2,7 @@ Repository for "Blocked training facilitates learning of multiple schemas" (prep
 
 If you would like to generate the figures in the paper, please run the colab here https://colab.research.google.com/github/PrincetonCompMemLab/csw_paper_final/blob/master/generate_paper_figures.ipynb.
 
-Run the colab here, https://colab.research.google.com/github/PrincetonCompMemLab/blocked_training_facilitates_learning/blob/master/running_4simulations_with_model.ipynb, for model simulations with the same parameter settings and configurations for:
+Run the colab here, https://colab.research.google.com/github/PrincetonCompMemLab/blocked_training_facilitates_learning/blob/master/running_7simulations_with_model.ipynb, for model simulations with the same parameter settings and configurations for:
  - simulations 1 to 3
  - the supplementary simulation 3 variant with schema inference switched off after the first block for blocked and early conditions (here referred to as simulation 4)
  - the supplementary individual differences in stickiness model (here referred to as simulation 5)
