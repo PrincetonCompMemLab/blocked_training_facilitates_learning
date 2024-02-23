@@ -1,4 +1,4 @@
-Repository for "Blocked training facilitates learning of multiple schemas" (preprint: https://psyarxiv.com/9bptj/):
+Repository for "Blocked training facilitates learning of multiple schemas"
 
 If you would like to generate the figures in the paper, please run the colab here https://colab.research.google.com/github/PrincetonCompMemLab/csw_paper_final/blob/master/generate_paper_figures.ipynb.
 
